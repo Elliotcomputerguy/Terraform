@@ -1,0 +1,107 @@
+
+# Terraform HCL Language guide
+
+#---------------------------------------------------------------------------------------
+https://www.terraform.io/docs/language/expressions/references.html
+#---------------------------------------------------------------------------------------
+
+# Terraform workflow:
+
+#---------------------------------------------------------------------------------------
+A terraform workflow is the combination of write -> plan -> deploy. You write create your terraform code and host in a GitHub repo. 
+continually add and review/plan changes to code in your project and then deploy after review/plan.
+#---------------------------------------------------------------------------------------
+
+# Terrafrom init (Initializing the working directory)
+
+#---------------------------------------------------------------------------------------
+The init command initalizes the working directory that contains your Terraform code.
+The init command sets up the backend state file that Terrafrom uses to track and destroy resources.
+This is the first command you will run. It fetches the providers and plugins that the terraform
+code is going to use. It caches the plugins and modules but will auto update when there is a update to those plugins or modules.
+#---------------------------------------------------------------------------------------
+
+# Terrafrom key concepts Plan, Apply and Destroy
+
+#---------------------------------------------------------------------------------------
+
+The first step is creating a repo in github. Write the terraform code. plan the code and then deploy. 
+
+Terrafrom Plan:
+Reads the code and then creates and shows a 'plan' of execution/deployment. This is a read only command. 
+It will authenticate and make API calls to the platform you are deploying to. It allows the user to review the action plan 
+before execution.
+
+Terrafrom Apply:
+apply will deploy the instructions and statements in the HCL code. 
+It will update the deployment state tracking mechanism flat file. The state file.
+The state file can be hosted remotely or locally. By default it is called terraform.dfstate
+The apply command will create the state file. 
+
+Terraform Destroy:
+The terraform destroy command will destroy all resources on the recorderd stored state file 
+created during deployment. The command is non reversible. Ensure to have a Azure baseline or a backup. 
+It will destroy resources in sequence. 
+
+#---------------------------------------------------------------------------------------
+
+# Resource Addressing in Terraform: Understanding Terrafrom code. 
+
+#---------------------------------------------------------------------------------------
+
+The init command will fetch the providers and plugins we require in our deployment so the code can interact with different platforms. 
+Every cloud vendor has its own provider. 
+
+          Keyword 
+             |    provider name
+             |       |                --#
+          provider "aws" {              |
+             region = "us-east-1"       |``` configuration parameters /kargs 
+          }                           --#
+
+The above HCL code snipit uses the keyword provider with the provider name that it gets from the terraform public registry. 
+Inbetween the curly braces is the configuration parameters that define the arguments passed into the provider.
+
+          Keyword     provider name
+              |         |     Built-in file() function
+              |         |       |
+            provider "google" { |                       --#
+                credentials = file("credentials.json")    | 
+                project = "my-gcp-project"                |````` configuration parameters /kargs
+                region = "us-east-1"                      | 
+            }                                           --#
+
+
+The above HCL code snipit uses the keyword provider again and provider name and also uses the built-in function file() to get the file
+It then uses keyword arguments passed into the parameters.
+
+            Reserved Keyword
+                  |      Resource provided by terraform provider 
+                  |           |          user-provided arbituary name        
+                  |           |           |
+                resource "aws_instance" "web" {                --#
+                    ami = "value"                                |
+                    instance_type = "value"                      |```` Resource configuration parameters / kargs 
+                }                                              --#
+
+To access the resource in terrafrom you would use the resource address with dot notation. Using dot notation you can access
+any attribute that the object provides within the terrafrom code. aws_instance.web 
+
+           Keyword
+              |    Resource provided by terraform provider
+              |         |      user-provided arbituary name
+              |         |          |
+            data "aws_instance" "my-vm" {     --#
+                        instance_id = "value"   |---- data source parameters / kargs  
+            }                                 --#
+                                                
+The difference between the resource and data block is that the resource block creates and data block already exists.
+In order to access the atributes of this resource is to use dot notation. data.aws_instance.my-vm
+
+
+Terraform executes code in files with the .tf extention. all teffaform files should be saved with this extention.
+Terraform looks for providers in the terraform providers public registry but you can be sourced locally. You can also create your 
+own custom providers.
+
+#---------------------------------------------------------------------------------------
+
