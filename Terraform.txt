@@ -12,7 +12,7 @@ A terraform workflow is the combination of write -> plan -> deploy. You write cr
 continually add and review/plan changes to code in your project and then deploy after review/plan.
 #---------------------------------------------------------------------------------------
 
-# Terrafrom init (Initializing the working directory)
+# Terraform init (Initializing the working directory)
 
 #---------------------------------------------------------------------------------------
 The init command initalizes the working directory that contains your Terraform code.
@@ -21,18 +21,18 @@ This is the first command you will run. It fetches the providers and plugins tha
 code is going to use. It caches the plugins and modules but will auto update when there is a update to those plugins or modules.
 #---------------------------------------------------------------------------------------
 
-# Terrafrom key concepts Plan, Apply and Destroy
+# Terraform key concepts Plan, Apply and Destroy
 
 #---------------------------------------------------------------------------------------
 
 The first step is creating a repo in github. Write the terraform code. plan the code and then deploy. 
 
-Terrafrom Plan:
+Terraform Plan:
 Reads the code and then creates and shows a 'plan' of execution/deployment. This is a read only command. 
 It will authenticate and make API calls to the platform you are deploying to. It allows the user to review the action plan 
 before execution.
 
-Terrafrom Apply:
+Terraform Apply:
 apply will deploy the instructions and statements in the HCL code. 
 It will update the deployment state tracking mechanism flat file. The state file.
 The state file can be hosted remotely or locally. By default it is called terraform.dfstate
@@ -45,7 +45,7 @@ It will destroy resources in sequence.
 
 #---------------------------------------------------------------------------------------
 
-# Resource Addressing in Terraform: Understanding Terrafrom code. 
+# Resource Addressing in Terraform: Understanding Terraform code. 
 
 #---------------------------------------------------------------------------------------
 
@@ -104,4 +104,3 @@ Terraform looks for providers in the terraform providers public registry but you
 own custom providers.
 
 #---------------------------------------------------------------------------------------
-
