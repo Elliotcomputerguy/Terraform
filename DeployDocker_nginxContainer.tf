@@ -6,8 +6,8 @@ terraform {
   }
 }
 
-provider "docker" {
-  host    = "npipe:////.//pipe//docker_engine"
+provider "docker" { 
+  host    = "npipe:////.//pipe//docker_engine" #api call to docker
 }
 
 resource "docker_image" "nginx" {
