@@ -1,0 +1,56 @@
+
+# What is Terraform
+
+#---------------------------------------------------------------------------------------
+Terraform is the infrastructure as code tool from HashiCorp. It is a tool for building, changing, and managing infrastructure in a safe, 
+repeatable way. Operators and Infrastructure teams can use Terraform to manage environments with a configuration language called 
+the HashiCorp Configuration Language (HCL) for human-readable, automated deployments.
+The infrastructure Terraform includes low-level components such as compute instances, 
+storage, and networking, as well as high-level components such as DNS entries, SaaS features, etc
+
+https://www.terraform.io/intro/index.html
+#---------------------------------------------------------------------------------------
+
+# Workflows
+
+#---------------------------------------------------------------------------------------
+A simple workflow for deployment will follow closely to the steps below. 
+
+Scope - Confirm what resources need to be created for a given project.
+Author - Create the configuration file in HCL based on the scoped parameters
+Initialize - Run terraform init in the project directory with the configuration files. 
+This will download the correct provider plug-ins for the project. Plan & Apply - Run terraform plan to 
+verify creation process and then terraform apply to create real resources as well as state file that compares future 
+changes in your configuration files to what actually exists in your deployment environment.
+#---------------------------------------------------------------------------------------
+
+# State Management
+
+#---------------------------------------------------------------------------------------
+Terraform creates a state file 'terraform.tfstate' when a project is first initialized with the terraform init command. 
+Terraform uses this local state to create plans and make changes to your infrastructure. Prior to any operation, 
+Terraform does a refresh to update the state with the real infrastructure. This means that Terraform state is the 
+source of truth by which configuration changes are measured. If a change is made or a resource is appended to a 
+configuration, Terraform compares those changes with the state file to determine what changes result in a new resource or 
+resource modifications.
+#---------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Terraform HCL Language guide
+
+#---------------------------------------------------------------------------------------
+https://www.terraform.io/docs/language/expressions/references.html
+#---------------------------------------------------------------------------------------
