@@ -8,16 +8,27 @@ step [5] run terraform apply.
 step [6] run terraform destroy to remove. 
 */
 
-# define the provider and argument for the region
-provider "aws" {
-        region = "us-east-1"
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.27" 
+    }
+  }
+
+  required_version = ">= 0.14.9"
 }
-# define the resource and a name for the resource
-resource "aws_instance" "vm" {
-        ami = "ami-0d5eff06f840b45e9" # Amazon machine id 
-        subnet_id = "subnet-037e53b146af2a614" # subnet 
-        instance_type = "t3.micro" # machine cpu-mem 
-        tags = {
-                Name = "my-first-tf-node" # tag
-        }
+
+provider "aws" {
+  profile = "default"
+  region  = "us-west-2"
+}
+
+resource "aws_instance" "app_server" {
+  ami           = "ami-08d70e59c07c61a3a"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "ExampleAppServerInstance"
+  }
 }
