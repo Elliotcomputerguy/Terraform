@@ -1,31 +1,13 @@
-/*
-    create a variable file for cred variables
-    admin_username = var.admin_username
-    admin_password = var.admin_password
-
-    variable "admin_username" {
-    type = string
-    description = "Administrator user name for virtual machine"
-}
-
-variable "admin_password" {
-    type = string
-    description = "Password must meet Azure complexity requirements"
-}
-
-*/
-
-
 terraform {
- backend "remote" {
-   organization = "org_name"
-   workspaces {
-     name = "workspace_name"
-   }
- }
+  backend "remote" {
+    organization = "org-name"
+    workspaces {
+      name = "workspace-example"
+    }
+  }
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = ">= 2.26"
     }
   }
@@ -38,25 +20,23 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "myTFResourceGroup"
-  location = "UK West"
-  tags = {
-      Environment = "Terraform Getting Started"
-      Team = "DevOps"
-  }
+  name     = "${var.prefix}Rg"
+  location = var.location
+  tags     = var.tags
 }
 
 # Create a virtual network
 resource "azurerm_virtual_network" "vnet" {
-    name                = "myTFVnet"
-    address_space       = ["10.0.0.0/16"]
-    location            = "westus2"
-    resource_group_name = azurerm_resource_group.rg.name
+  name                = "${var.prefix}Vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = var.tags
 }
 
 # Create subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = "myTFSubnet"
+  name                 = "${var.prefix}Subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
@@ -64,18 +44,20 @@ resource "azurerm_subnet" "subnet" {
 
 # Create public IP
 resource "azurerm_public_ip" "publicip" {
-  name                = "myTFPublicIP"
-  location            = "westus2"
+  name                = "${var.prefix}PublicIP"
+  location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
+  tags                = var.tags
 }
 
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nsg" {
-  name                = "myTFNSG"
-  location            = "westus2"
+  name                = "${var.prefix}Nsg"
+  location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
+  tags                = var.tags
 
   security_rule {
     name                       = "SSH"
@@ -92,12 +74,13 @@ resource "azurerm_network_security_group" "nsg" {
 
 # Create network interface
 resource "azurerm_network_interface" "nic" {
-  name                      = "myNIC"
-  location                  = "westus2"
-  resource_group_name       = azurerm_resource_group.rg.name
+  name                = "${var.prefix}Nic"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = var.tags
 
   ip_configuration {
-    name                          = "myNICConfg"
+    name                          = "${var.prefix}NicConfig"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "dynamic"
     public_ip_address_id          = azurerm_public_ip.publicip.id
@@ -106,14 +89,15 @@ resource "azurerm_network_interface" "nic" {
 
 # Create a Linux virtual machine
 resource "azurerm_virtual_machine" "vm" {
-  name                  = "myTFVM"
-  location              = "westus2"
+  name                  = "${var.prefix}Vm"
+  location              = var.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
   vm_size               = "Standard_DS1_v2"
+  tags                  = var.tags
 
   storage_os_disk {
-    name              = "myOsDisk"
+    name              = "${var.prefix}OsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
@@ -122,7 +106,7 @@ resource "azurerm_virtual_machine" "vm" {
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04.0-LTS"
+    sku       = lookup(var.sku, var.location)
     version   = "latest"
   }
 
@@ -141,4 +125,12 @@ data "azurerm_public_ip" "ip" {
   name                = azurerm_public_ip.publicip.name
   resource_group_name = azurerm_virtual_machine.vm.resource_group_name
   depends_on          = [azurerm_virtual_machine.vm]
+}
+
+output "os_sku" {
+  value = lookup(var.sku, var.location)
+}
+
+output "public_ip_address" {
+  value = data.azurerm_public_ip.ip.ip_address
 }
