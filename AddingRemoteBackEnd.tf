@@ -27,8 +27,8 @@ https://learn.hashicorp.com/tutorials/terraform/aws-remote?in=terraform/aws-get-
 
 AWS_ACCESS_KEY_ID (sensitive)
 AWS_SECRET_ACCESS_KEY (sensitive)
-[7] run terraform init to initilize backend state file
-[8] run terraform plan and apply
+[5] run terraform init to initilize backend state file
+[6] run terraform plan and apply
 
 */
 
