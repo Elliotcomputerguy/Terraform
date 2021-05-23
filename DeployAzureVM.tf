@@ -1,3 +1,21 @@
+/*
+    create a variable file for cred variables
+    admin_username = var.admin_username
+    admin_password = var.admin_password
+
+    variable "admin_username" {
+    type = string
+    description = "Administrator user name for virtual machine"
+}
+
+variable "admin_password" {
+    type = string
+    description = "Password must meet Azure complexity requirements"
+}
+
+*/
+
+
 terraform {
  backend "remote" {
    organization = "org_name"
