@@ -1,9 +1,12 @@
 
-
-
-#az account set --subscription="SUBSCRIPTION_ID" 
 # Configure the Azure provider
 terraform {
+ backend "remote" {
+   organization = "<ORG_NAME>"
+   workspaces {
+     name = "Azure"
+   }
+ }
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
@@ -16,6 +19,7 @@ terraform {
 
 provider "azurerm" {
   features {}
+  subscription_id = var.subscription_id
 }
 
 resource "azurerm_resource_group" "rg" {
