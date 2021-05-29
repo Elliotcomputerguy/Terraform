@@ -1,5 +1,5 @@
 /* 
- Map - Lookup() function
+ Map - Lookup() and object type
 #================================================================================================================================
 A map value is a lookup table of string name = value pairs. The variables.tf contains two maps, 
 one for tags, and one for sku.
@@ -35,6 +35,13 @@ variable "sku" {
     offer     = "UbuntuServer"
     sku       = lookup(var.sku, var.location) #implicitly declared for var.sku
     version   = "latest"
+  }
+
+  variable "multiple_data_types" {
+    type = object({
+      name = string
+      num = number
+    })
   }
 
 #================================================================================================================================
